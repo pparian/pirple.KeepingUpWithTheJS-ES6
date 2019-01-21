@@ -1,0 +1,80 @@
+<!-- // Details:
+// Create a very simple webpage, displaying some of your favorite colors. 
+// Use HTML, CSS and Javascript.
+// 1. The top of the page should include a header <h1> tag, 
+// with a name for your page, and then an <h2> tag with a description 
+// of what's on the page.
+// 2. Further down the page you should draw 10 rectangles, 
+// of any size you wish, and give them each a unique hex-code 
+// so they all appear as different colors. Here's a color-picker that might help.
+// 3. Below each rectangles, list the hex code (in plain text).
+// 4. Give all of the rectangles the same class, 
+// but make sure each rectangle has a unique ID.
+// 5. Wrap all of the rectangles in an containing element 
+// ( a <div> ) and give that element the id "rectangleWrapper". 
+// Now give that element 50 pixels of padding on its top, right and left sides. 
+// But add zero padding to the bottom.
+// 6. When the page loads, console.log the messages 
+// "Here are the rectangle IDs" and then console.log all the rectangles' IDs, 
+// one at a time.
+// 7. In the <head> of the document, 
+// add a <title> tag that matches the text in the <h1> you added in step 1. -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>theDom - JS Homework Assessment #7</title>
+</head>
+<h1>
+theDOM - JS Homework Assessment #7
+</h1>
+<h2>
+This page contains the output of JS Homework Assessment #8!
+There are 10 rectangles, each with a different colour
+</h2>
+<body id="main">
+
+</body>
+<script>
+	function createRectangle(id,height,width,colour,appendTo) {
+		let newDiv = document.createElement("div");
+		newDiv.setAttribute("id",id);
+		newDiv.setAttribute("class","rectangles");
+		newDiv.style.height = height;
+		newDiv.style.width = width;
+		newDiv.style.backgroundColor = colour;
+		appendTo.appendChild(newDiv);
+	};
+	function addColourName(colour,appendTo) {
+		let newColourName = document.createElement("P");
+		newColourName.innerText = colour;
+		appendTo.appendChild(newColourName);
+	}
+	const mainBody = document.getElementById("main");
+	const wrapDiv = document.createElement("div");
+	wrapDiv.setAttribute("id","rectangleWrapper");
+	wrapDiv.style.padding = "50px 50px 0px 50px";
+	mainBody.appendChild(wrapDiv);
+
+	const colours = ['#FF5733','#FFBB33','#F6FF33','#64FF33','#33FFA8','#33FCFF','#3349FF','#FF33E9','#FF3352','#000000'];
+	for (i=0; i <= colours.length-1;i++) {
+		createRectangle(colours[i],"100px","200px",colours[i],wrapDiv);
+		addColourName(colours[i],wrapDiv);
+	}
+
+	console.log("Here are the rectangle IDs: ");
+
+
+	const rectangleDivs = document.querySelectorAll(".rectangles");
+	const listId = async () => {
+		for (const prop of rectangleDivs) {
+			await setTimeout( () => {
+				console.log(prop.id);
+			}, 1000 * i);
+				
+		}
+	}
+	listId();
+</script>
+</html>
