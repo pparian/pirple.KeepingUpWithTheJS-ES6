@@ -1,0 +1,242 @@
+<!-- Details:
+ 
+ You can think of this homework as a warmup to project #1 (coming directly after this assignment). Don't worry too much about making this homework perfect, save your energy (and sanity) for the larger project. For this assignment we'll just be looking to see that you covered the basic functionality.
+
+Your assignment is to create a tic-tac-toe game out of HTML, CSS and Javascript. You should have a single HTML page, one accompanying JS file, and one accompanying CSS file.
+
+1. When the page loads, only the game board should be displayed (draw the game board any way you see fit).
+
+2. When a user clicks within the game board (in an empty space) their mark (either "X" or "O" should appear there). "X" goes first. So the first valid click on the game board should produce an "X". The second should produce an "O", and then they should trade off.
+
+ 3. The "X" s should be red, and the "O"s should be black.
+
+4. If someone wins (gets three in a row), you should make a dialog box appear on the screen that says either "X has won!" or "O has won!" And when the dialog box is closed, the game should be reset to its beginning state.
+
+5. If all the areas of the board get filled but nobody wins, a dialog box appear on the screen that says either "Cats game!" And when the dialog box is closed, the game should be reset to its beginning state. (What does cat's game mean?) -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>events - JS Homework Assessment #8</title>
+</head>
+<style id="css-styling">
+	.container{
+		padding: 100px;
+		width: 460px;
+		background: green;
+		border: 1px solid black;
+	}
+
+	.row{
+		width: 460px;
+		background: blue;
+		border: 1px solid black;
+	}
+
+	.rowSquares{
+		display: inline-block;
+		vertical-align: top;
+		text-align: center;
+		font-size: 100px;
+		width: 130px;
+		height: 130px;
+		background: white;
+		margin: 10px;
+		border: 1px solid black;
+	}
+
+	.X{
+		color: red;
+	}
+
+	.O{
+		color: black;
+	}	
+</style>
+<link rel="stylesheet" type="text/css" href="events.css"></link>
+<h1>
+Events: Tic-Tac-Toe
+</h1>
+<body>
+	
+</body>
+<script id="js-script">
+	const mainBody = document.body;
+
+	const containerDiv = document.createElement("div");
+	containerDiv.setAttribute("id","container");
+	containerDiv.setAttribute("class","container");
+
+	mainBody.append(containerDiv); 
+
+	alert ("Play Tic-Tac-Toe!\n X goes first.")
+
+	function createRow (rowNum,appendTo) {
+		const row = document.createElement("div");
+		row.setAttribute("id","row"+rowNum);
+		row.setAttribute("class","row");
+		appendTo.append(row);
+	}
+	function createSquare (rowNum,colNum,appendTo) {
+		const square = document.createElement("div");
+		square.setAttribute("id","row"+rowNum+"col"+colNum);
+		square.setAttribute("class","rowSquares");
+		appendTo.append(square);
+
+	}
+
+	for (let rowNum = 1; rowNum <= 3; rowNum++) {
+		createRow(rowNum,containerDiv);
+		for (let colNum = 1; colNum <= 3; colNum++){
+			let rowDiv = document.getElementById("row"+rowNum);
+			createSquare(rowNum,colNum,rowDiv);
+		}
+	}
+
+	let clicks = 0;
+	let mark = '';
+	let squaresClicked = [];
+	let gameStore = {};
+
+	function trackClicks(num){
+		return num + 1;
+	};
+	function calculateMark(num){
+		if (num % 2 === 1) {
+			return "X";
+		}
+		if (num % 2 === 0) {
+			return "O";
+		}
+	};
+	async function createMark (mark,element){
+		element.innerText = await mark;
+		switch(mark){
+			case "X":
+				element.style.color = await "red";
+				break;
+			case "O":
+				element.style.color = await "black";
+				break;
+			default:
+				element.style.color = await "black";
+				break;
+		};
+	}
+
+	async function refreshGame(value){
+		if(value){
+			clicks = await 0;
+			mark = await '';
+			squaresClicked = await [];
+			gameStore = await {};
+			await console.log("Refreshed Values");
+			await console.log("Number of clicks: " + clicks);
+			await console.log("Mark is: " + mark);
+			await console.log("gameStore is: " + gameStore);
+			if(value === "draw"){
+				setTimeout(() => {
+					if(confirm("Cat's Game.\nWould you like to play again?")){
+						window.location.reload();
+					}
+				}, 500);
+				await alert("Cat's Game");
+			} else if (value.includes("won")) {
+				setTimeout(() => {
+					if(confirm(value +"\nWould you like to play again?")){
+						window.location.reload();
+					}
+				}, 500);
+			}
+			
+		}
+	}
+	async function evaluateGameEnd (clicks,gameStore){
+		
+		let square1 = await gameStore.row1col1 != 'undefined' ? gameStore.row1col1 : false;
+		let square2 = await gameStore.row1col2 != 'undefined' ? gameStore.row1col2 : false;
+		let square3 = await gameStore.row1col3 != 'undefined' ? gameStore.row1col3 : false;
+		let square4 = await gameStore.row2col1 != 'undefined' ? gameStore.row2col1 : false;
+		let square5 = await gameStore.row2col2 != 'undefined' ? gameStore.row2col2 : false;
+		let square6 = await gameStore.row2col3 != 'undefined' ? gameStore.row2col3 : false;
+		let square7 = await gameStore.row3col1 != 'undefined' ? gameStore.row3col1 : false;
+		let square8 = await gameStore.row3col2 != 'undefined' ? gameStore.row3col2 : false;
+		let square9 = await gameStore.row3col3 != 'undefined' ? gameStore.row3col3 : false;
+
+		// Evaluating rows
+		if (square1 && square2 && square3
+					&& square1 === square2
+					&& square2 === square3){
+			console.log("first row trig");
+			return square1 + " has won!";
+		} else if (square4 && square5 && square6
+					&& square4 === square5
+					&& square5 === square6) {
+			return square4 + " has won!";
+		} else if (square7 && square8 && square9
+					&& square7 === square8
+					&& square8 === square9) {
+			console.log("third row trig");
+			return square7 + " has won!";
+		} 
+		// Evaluating columns
+		else if (square1 && square4 && square7
+					&& square1 === square4
+					&& square4 === square7) {
+			console.log("first col trig");
+			return square1 + " has won!";
+		} else if (square2 && square5 && square8
+					&& square2 === square5
+					&& square5 === square8) {
+			console.log("second col trig");
+			return square2 + " has won!";
+		} else if (square3 && square6 && square9
+					&& square3 === square6
+					&& square6 === square9) {
+			console.log("third col trig");
+			return square3 + " has won!";
+		}
+		// Evaluating diagonals
+		else if (square1 && square5 && square9
+					&& square1 === square5
+					&& square5 === square9) {
+			console.log("first diag trig");
+			return square1 + " has won!";
+		} else if (square7 && square5 && square3
+					&& square7 === square5
+					&& square5 === square3) {
+			console.log("second diag trig");
+			return square7 + " has won!";
+		}
+		// Evaluating draw
+		else if(clicks === 9){
+			return "draw";
+		} else {
+			return false;
+		}
+
+	};
+
+	async function triggerEvent (event) {
+		const hasBeenClicked = event.target;
+		if (hasBeenClicked.className === "rowSquares"
+		 && Object.keys(gameStore).indexOf(hasBeenClicked.id) === -1){
+			await squaresClicked.push(hasBeenClicked.id);
+			clicks = await trackClicks(clicks);
+			await console.log("Number of clicks: " + clicks);
+			mark = await calculateMark(clicks);
+			gameStore[hasBeenClicked.id] = await mark;
+			await console.log(gameStore);
+			await console.log("Mark is: " + mark);
+			await createMark(mark,hasBeenClicked);
+		}
+		result = await evaluateGameEnd(clicks,gameStore);
+		await refreshGame(result);
+	};
+
+	document.addEventListener("mousedown", triggerEvent);
+
+</script>
+</html>
