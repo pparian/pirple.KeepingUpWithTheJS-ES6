@@ -11,16 +11,19 @@ const signUpButton = document.createElement("button");
 signUpButton.setAttribute("class","startButton");
 signUpButton.setAttribute("id","sign-up");
 signUpButton.innerText = "Sign Up";
+signUpButton.style.display = "inline";
 containerDiv.appendChild(signUpButton);
 
 const logInButton = document.createElement("button");
 logInButton.setAttribute("class","startButton");
 logInButton.setAttribute("id","log-in");
 logInButton.innerText = "Log In";
+logInButton.style.display = "inline";
 containerDiv.appendChild(logInButton);
 
 function generateDashboard(email){
 	let userData = JSON.parse(localStorage.getItem(email));
+	console.log(userData);
 
 	// create dashboard div
 	const dashboard = document.createElement("div");
@@ -38,6 +41,12 @@ function generateDashboard(email){
 	logOutButton.setAttribute("id","log-out");
 	logOutButton.innerText = "Log Out";
 	dashboard.appendChild(logOutButton);
+	// creating accountSettings button
+	const accountSettingsButton = document.createElement("button");
+	accountSettingsButton.setAttribute("class","accountSettingsButton");
+	accountSettingsButton.setAttribute("id","account-settings");
+	accountSettingsButton.innerText = "Account Settings";
+	dashboard.appendChild(accountSettingsButton);
 
 	// creating 'Create new to-do list' button
 	const createListButtonPara = document.createElement("p");
@@ -49,6 +58,131 @@ function generateDashboard(email){
 	createListButton.innerText = "Create To-Do List";
 	createListButtonPara.appendChild(createListButton);
 
+	async function logOut(event){
+		await event.preventDefault();
+		setTimeout(async () => {
+			logInButton.style.display = await "inline";
+			signUpButton.style.display = await "inline";
+		}, 500);
+		userData = await null;
+		console.log(userData);
+		dashboard.style.display = await "none";
+	};
+
+	function accountSettings(event){
+		dashboard.style.display = "none";
+
+		const target = event.target;
+		console.log(target);
+		// creating account settings form
+		const acctSettingsForm = document.createElement("form");
+		acctSettingsForm.setAttribute("class","acctSettingsForm");
+		acctSettingsForm.setAttribute("id","acct-settings-form");
+		acctSettingsForm.setAttribute("method","post");
+		containerDiv.appendChild(acctSettingsForm);
+	
+		// creating firstname input
+		const asFNamePara = document.createElement("p");
+		asFNamePara.setAttribute("id","acct-settings-first-name-paragraph");
+		acctSettingsForm.appendChild(asFNamePara);
+	
+		const asFNameLabel = document.createElement("label");
+		asFNameLabel.setAttribute("for","firstName");
+		asFNameLabel.innerText = "First Name: ";
+		asFNamePara.appendChild(asFNameLabel);
+	
+		const asFirstName = document.createElement("input");
+		asFirstName.setAttribute("type","text");
+		asFirstName.setAttribute("name","firstName");
+		asFirstName.setAttribute("id","firstName-acctSettings");
+		asFirstName.setAttribute("required","true");
+		asFNamePara.appendChild(asFirstName);
+	
+		// creating lastname input
+		const asLNamePara = document.createElement("p");
+		asLNamePara.setAttribute("id","acct-settings-last-name-paragraph");
+		acctSettingsForm.appendChild(asLNamePara);
+	
+		const asLNameLabel = document.createElement("label");
+		asLNameLabel.setAttribute("for","lastName");
+		asLNameLabel.innerText = "Last Name: ";
+		asLNamePara.appendChild(asLNameLabel);
+	
+		const asLastName = document.createElement("input");
+		asLastName.setAttribute("type","text");
+		asLastName.setAttribute("name","lastName");
+		asLastName.setAttribute("id","lastName-acctSettings");
+		asLastName.setAttribute("required","true");
+		asLNamePara.appendChild(asLastName);
+	
+		// creating password input
+		const asPasswordPara = document.createElement("p");
+		asPasswordPara.setAttribute("id","acct-settings-password-paragraph");
+		acctSettingsForm.appendChild(asPasswordPara);
+	
+		const asPasswordLabel = document.createElement("label");
+		asPasswordLabel.setAttribute("for","password");
+		asPasswordLabel.innerText = "Password: ";
+		asPasswordPara.appendChild(asPasswordLabel);
+	
+		const asPassword = document.createElement("input");
+		asPassword.setAttribute("type","password");
+		asPassword.setAttribute("name","password");
+		asPassword.setAttribute("id","password-acctSettings");
+		asPassword.setAttribute("required","true");
+		asPasswordPara.appendChild(asPassword);
+	
+		// creating submit button
+		const asSubmitButtonPara = document.createElement("p");
+		asSubmitButtonPara.setAttribute("id","acct-settings-submit-button-paragraph");
+		acctSettingsForm.appendChild(asSubmitButtonPara);
+	
+		const asSubmitButton = document.createElement("button");
+		asSubmitButton.setAttribute("type","submit");
+		asSubmitButton.innerText = "Submit";
+		asSubmitButtonPara.appendChild(asSubmitButton);
+
+		// creating cancel button
+		const asCancelButtonPara = document.createElement("p");
+		asCancelButtonPara.setAttribute("id","acct-settings-cancel-button-paragraph");
+		acctSettingsForm.appendChild(asCancelButtonPara);
+	
+		const asCancelButton = document.createElement("button");
+		asCancelButton.setAttribute("type","button");
+		asCancelButton.innerText = "Cancel";
+		asCancelButtonPara.appendChild(asCancelButton);
+
+		function hideAcctSettings(){
+			acctSettingsForm.style.display = "none";
+			setTimeout(() => {
+				dashboard.style.display = "inline";
+			},20);
+		};
+
+		function logAcctSettingsInput(event){
+			event.preventDefault();
+			let firstName = document.getElementById("firstName-acctSettings").value;
+			let lastName = document.getElementById("lastName-acctSettings").value;
+			let password = document.getElementById("password-acctSettings").value;
+
+	
+			userData.firstName = firstName;
+			userData.lastName = lastName;
+			userData.password = password;
+	
+			console.log(userData);
+			localStorage.setItem(email,JSON.stringify(userData));
+			hideAcctSettings();
+	
+		};
+
+		acctSettingsForm.addEventListener("submit", logAcctSettingsInput);
+		asCancelButton.addEventListener("mouseup", hideAcctSettings);
+		
+	};
+
+	logOutButton.addEventListener('mouseup',logOut);
+	accountSettingsButton.addEventListener('mouseup',accountSettings);
 };
 
 function generateSignUpForm(){
@@ -183,8 +317,7 @@ function generateSignUpForm(){
 
 	};
 
-	const signUp = document.getElementById("sign-up-form");
-	signUp.addEventListener("submit", logSignUpInput);
+	signUpForm.addEventListener("submit", logSignUpInput);
 
 	
 
@@ -273,10 +406,8 @@ function triggerEvent(event){
 		console.log(target);
 		generateLogInForm();
 	}
-	const buttons = document.getElementsByClassName("startButton");
-	for(prop of buttons){
-		prop.style.display = "none";
-	}
+	logInButton.style.display = "none";
+	signUpButton.style.display = "none";
 
 };
 
