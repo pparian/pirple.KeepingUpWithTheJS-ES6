@@ -22,8 +22,7 @@ logInButton.style.display = "inline";
 containerDiv.appendChild(logInButton);
 
 function generateDashboard(email){
-	let userData = JSON.parse(localStorage.getItem(email));
-	console.log(userData);
+	let userEmail = email;
 
 	// create dashboard div
 	const dashboard = document.createElement("div");
@@ -33,7 +32,7 @@ function generateDashboard(email){
 
 	// create dashboard heading
 	const dashboardHead = document.createElement("h1");
-	dashboard.innerText = "Welcome to " + userData.firstName + "'s Dashboard!";
+	dashboard.innerText = "Welcome to your Dashboard!";
 
 	// creating logOut button
 	const logOutButton = document.createElement("button");
@@ -48,6 +47,17 @@ function generateDashboard(email){
 	accountSettingsButton.innerText = "Account Settings";
 	dashboard.appendChild(accountSettingsButton);
 
+	// creating lists div
+	const listPara = document.createElement("p");
+	listPara.setAttribute("id","list-paragraph");
+	dashboard.appendChild(listPara);
+	// create a list div
+	// @TODO put variable test in a function to be called
+	const listDiv = document.createElement("div");
+	listDiv.setAttribute("class","dashboardListDiv");
+	listDiv.setAttribute("id","dashboard-list-div");
+	listPara.appendChild(listDiv);
+
 	// creating 'Create new to-do list' button
 	const createListButtonPara = document.createElement("p");
 	createListButtonPara.setAttribute("id","create-todo-list-button-paragraph");
@@ -57,6 +67,43 @@ function generateDashboard(email){
 	// createListButton.setAttribute("type","submit");
 	createListButton.innerText = "Create To-Do List";
 	createListButtonPara.appendChild(createListButton);
+
+	async function callUserData(email){
+		let data = await JSON.parse(localStorage.getItem(email));
+		await console.log(data);
+		return data;
+	};
+	async function generateLists(email){
+		let userData = await callUserData(email);
+		
+		async function buildList(list){
+			let listElement = document.createElement("ul");
+			listElement.setAttribute("id",list);
+			listElement.innerText = list;
+			listDiv.appendChild(listElement);
+			for (let item in userData.lists[list]) {
+				console.log(userData.lists[list][item]);
+				let listItem = document.createElement("li");
+				listItem.innerText = userData.lists[list][item];
+				listElement.appendChild(listItem);
+			};
+		};
+
+		if(JSON.stringify(userData.lists) != "{}"){
+			console.log("Lists have data!");
+			for (let list in userData.lists){
+				console.log("The Title of this list is " + list);
+				buildList(list);
+			}
+		} else {
+			console.log("There are not lists");
+			setTimeout(() => {
+				listDiv.innerText = "There are no lists";
+			}, 20);
+			
+		}
+	}
+	generateLists(userEmail);
 
 	async function logOut(event){
 		await event.preventDefault();
@@ -181,8 +228,18 @@ function generateDashboard(email){
 		
 	};
 
+	function createList(event){
+		event.preventDefault();
+		console.log(event.target);
+		dashboard.style.display = "none";
+
+		// const createListFo
+
+	}
+
 	logOutButton.addEventListener('mouseup',logOut);
 	accountSettingsButton.addEventListener('mouseup',accountSettings);
+	createListButton.addEventListener('mouseup',createList);
 };
 
 function generateSignUpForm(){
@@ -295,6 +352,7 @@ function generateSignUpForm(){
 		let email = document.getElementById("email-signUp").value;
 		let password = document.getElementById("password-signUp").value;
 		let terms = document.getElementById("terms-signUp").value;
+		let lists = {};
 		let userInfo = {};
 
 		userInfo.firstName = firstName;
@@ -302,6 +360,7 @@ function generateSignUpForm(){
 		userInfo.email = email;
 		userInfo.password = password;
 		userInfo.terms = terms;
+		userInfo.lists = lists;
 
 		// console.log(email,localStorage.getItem(email));
 
@@ -310,7 +369,7 @@ function generateSignUpForm(){
 		if (localStorage.getItem(email) === null){
 			localStorage.setItem(email,JSON.stringify(userInfo));
 			generateDashboard(email);
-			signUp.style.display = "none";
+			signUpForm.style.display = "none";
 		} else {
 			alert("Email or Password does not match!");
 		}		
