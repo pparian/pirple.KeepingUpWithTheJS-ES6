@@ -1,5 +1,9 @@
 /* .mainBody{
 }
-
-.container{
-} */
+*/
+.startButtons{
+    display: inline;
+} 
+.dashboardButtons{
+    display: inline;
+} 

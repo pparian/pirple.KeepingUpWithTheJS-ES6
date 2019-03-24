@@ -78,6 +78,7 @@ function generateDashboard(email){
 		
 		async function buildList(list){
 			let listElement = document.createElement("ul");
+			listElement.setAttribute("class","to-do-list");
 			listElement.setAttribute("id",list);
 			listElement.innerText = list;
 			listDiv.appendChild(listElement);
@@ -235,11 +236,20 @@ function generateDashboard(email){
 
 		// const createListFo
 
-	}
+	};
+
+	function editList(event){
+		event.preventDefault;
+		const target = event.target;
+		if(target.className === "to-do-list"){
+			console.log(target);
+		}
+	};
 
 	logOutButton.addEventListener('mouseup',logOut);
 	accountSettingsButton.addEventListener('mouseup',accountSettings);
 	createListButton.addEventListener('mouseup',createList);
+	document.addEventListener('mouseup',editList);
 };
 
 function generateSignUpForm(){

@@ -82,7 +82,86 @@ but it's still good practice to get used to using hashing libraries. -->
 JS Project #1: To-do List
 </h1>
 <body class="mainBody">
-
+	<div id="startButtons" class="startButtons">
+		<button id="sign-up">Sign Up</button>
+		<button id="log-in">Log In</button>
+	</div>
+	<div id="sign-up-div" class="signUpDiv">
+		<form id="sign-up-form" class="signUpForm">
+			<p>
+				<label for="firstName">First Name: </label>
+				<input type="text" name="firstName" id="firstName-signUp" required=true>
+			</p>
+			<p>
+				<label for="lastName">Last Name: </label>
+				<input type="text" name="lastName" id="lastName-signUp" required=true>
+			</p>
+			<p>
+				<label for="email">Email: </label>
+				<input type="email" name="email" id="email-signUp" required=true>
+			</p>
+			<p>
+				<label for="password">Password: </label>
+				<input type="password" name="password" id="password-signUp" required=true>
+			</p>
+			<p>
+				<label for="terms">I agree to the Terms of Use: </label>
+				<input type="checkbox" name="terms" id="terms-signUp" required=true>
+			</p>
+			<p>
+				<button type="submit" id="submit-signUp" class="signUpButtons">Submit</button>
+				<button id="cancel-signUp" class="signUpButtons">Cancel</button>
+			</p>
+		</form>
+	</div>
+	<div id="log-in-div" class="logInDiv">
+		<form id="log-in-form" class="logInForm">
+			<p>
+				<label for="email">Email: </label>
+				<input type="email" name="email" id="email-logIn" required=true>
+			</p>
+			<p>
+				<label for="password">Password: </label>
+				<input type="password" name="password" id="password-logIn" required=true>
+			</p>
+			<p>
+				<button type="submit" id="submit-logIn" class="logInButtons">Submit</button>
+				<button id="cancel-logIn" class="logInButtons">Cancel</button>
+			</p>
+		</form>
+	</div>
+	<div id="dashboard" class="dashboard">
+		<div id="dashboard-buttons" class="dashboardButtons">
+				<button id="log-out">Log Out</button>
+				<button id="account-settings">Account Settings</button>
+		</div>
+		<div id="dashboard-list-div" class="dashboardListDiv">
+			<p>
+				<button id="create-to-do-list">Create New To-Do List</button>
+			</p>
+		</div>
+	</div>
+	<div id="account-settings-div" class="accountSettingsDiv">
+		<form id="account-settings-form" class="accountSettingsForm">
+			<p>
+				<label for="firstName">First Name: </label>
+				<input type="text" name="firstName" id="firstName-accountSettings" required=true>
+			</p>
+			<p>
+				<label for="lastName">Last Name: </label>
+				<input type="text" name="lastName" id="lastName-accountSettings" required=true>
+			</p>
+			<p>
+				<label for="password">Password: </label>
+				<input type="password" name="password" id="password-accountSettings" required=true>
+			</p>
+			<p>
+				<button type="submit" id="submit-accountSettings" class="accountSettingsButtons">Submit</button>
+				<button id="cancel-accountSettings" class="accountSettingsButtons">Cancel</button>
+			</p>
+		</form>		
+	</div>
 </body>
-<script type='text/javascript' src='project1.js'></script>
+<!-- <script type='text/javascript' src='project1.js'></script> -->
+<!-- <script type='text/javascript' src='project1_test.js'></script> -->
 </html>
