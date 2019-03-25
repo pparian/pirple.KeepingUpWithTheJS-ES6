@@ -1,9 +1,25 @@
 /* .mainBody{
 }
 */
-.startButtons{
+.startButtonsDiv{
     display: inline;
 } 
-.dashboardButtons{
+.signUpDiv{
+    display: none;
+}
+.logInDiv{
+    display: none;
+}
+.dashboardDiv{
+    display: none;
+}
+/* .dashboardButtonsDiv{
     display: inline;
-} 
+}
+.dashboardListDiv{
+    display: inline;
+}
+*/
+.accountSettingsDiv{
+    display: none;
+}
