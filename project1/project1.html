@@ -133,8 +133,8 @@ JS Project #1: To-do List
 	<div id="dashboard-div" class="dashboardDiv">
 		<h3 id="dashboard-header" class="dashboardHeader"></h3>
 		<div id="dashboard-buttons-div" class="dashboardButtonsDiv">
-				<button type="button" id="log-out">Log Out</button>
-				<button type="button" id="account-settings">Account Settings</button>
+			<button type="button" id="log-out">Log Out</button>
+			<button type="button" id="account-settings">Account Settings</button>
 		</div>
 		<div id="dashboard-list-div" class="dashboardListDiv">
 			<p>
@@ -144,6 +144,10 @@ JS Project #1: To-do List
 	</div>
 	<div id="account-settings-div" class="accountSettingsDiv">
 		<form id="account-settings-form" class="accountSettingsForm">
+			<p>
+				<label for="email">Email (must match log-in email): </label>
+				<input type="email" name="email" id="email-accountSettings" required=true>
+			</p>
 			<p>
 				<label for="firstName">First Name: </label>
 				<input type="text" name="firstName" id="firstName-accountSettings" required=true>
@@ -161,6 +165,26 @@ JS Project #1: To-do List
 				<button type="button" id="cancel-accountSettings" class="accountSettingsButtons">Cancel</button>
 			</p>
 		</form>		
+	</div>
+	<div id="create-new-list-div" class="createNewListDiv">
+		<form id="add-listname-form" class="addListNameForm">
+			<p>
+				<label for="listName">List Name: </label>
+				<input type="text" name="listName" id="listName-createNewList" required=false>
+				<button type="submit" id="addListName-createNewList" class="createNewListButtons">Save</button>
+			</p>
+		</form>
+		<form id="add-point-form" class="addPointForm">
+			<p>
+				<label for="point">Add point: </label>
+				<input type="text" name="point" id="point-createNewList" required=false>
+				<button type="submit" id="addPoint-createNewList" class="createNewListButtons">Save</button>
+			</p>
+		</form>				
+		<p>
+			<button type="button" id="save-createNewList" class="createNewListButtons">Save</button>
+			<button type="button" id="cancel-createNewList" class="createNewListButtons">Cancel</button>
+		</p>
 	</div>
 </body>
 <script type='text/javascript' src='project1.js'></script>
