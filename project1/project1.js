@@ -16,11 +16,43 @@ const generateAccountSettingsForm = () => {
 const generateCreateNewListForm = () => {
 	document.getElementById("create-new-list-div").style.display = "inline";
 };
+const generateLists = (listObj) => {
+	const listDiv = document.getElementById("dashboard-list-div");
+	const userLists = listObj;
+	async function buildList(list){
+		let listElement = document.createElement("ul");
+		listElement.setAttribute("class","to-do-list");
+		listElement.setAttribute("id",list);
+		listElement.innerText = list;
+		listDiv.appendChild(listElement);
+		for (let item in userLists[list]) {
+			console.log(userLists[list][item]);
+			let listItem = document.createElement("li");
+			listItem.innerText = userLists[list][item];
+			listElement.appendChild(listItem);
+		};
+	};
+	if(JSON.stringify(userLists) != "{}"){
+		console.log("Lists have data!");
+		listDiv.innerText = "";
+		for (let list in userLists){
+			console.log("The Title of this list is " + list);
+			buildList(list);
+		}
+	} else {
+		console.log("There are not lists");
+		setTimeout(() => {
+			listDiv.innerText = "There are no lists";
+		}, 20);
+	}
+}
 const generateDashboard = async (email) => {
 	document.getElementById("dashboard-div").style.display = "inline";
 	const userData = await JSON.parse(localStorage.getItem(email));
+	console.log(userData);
 	document.getElementById("dashboard-header").innerText = await "Welcome to your Dashboard "
 		+ userData.firstName +"!";
+	generateLists(userData.lists);
 };
 
 const logSignUpData = async (event) => {
@@ -77,21 +109,19 @@ const logAccountSettingsData = async (event) => {
 	event.preventDefault();
 	const target = event.target;
 	console.log(target);
+	const userData = await JSON.parse(localStorage.getItem(userEmail));
 	let email = document.getElementById("email-accountSettings").value;
 	let firstName = document.getElementById("firstName-accountSettings").value;
 	let lastName = document.getElementById("lastName-accountSettings").value;
 	let password = document.getElementById("password-accountSettings").value;
-	let lists = {};
-	let userInfo = {};
 
-	userInfo.firstName = firstName;
-	userInfo.lastName = lastName;
-	userInfo.password = password;
-	userInfo.lists = lists;
+	userData.firstName = firstName;
+	userData.lastName = lastName;
+	userData.password = password;
 
-	console.log(userInfo);
+	console.log(userData);
 	if (email === userEmail){
-		await localStorage.setItem(email,JSON.stringify(userInfo));
+		await localStorage.setItem(email,JSON.stringify(userData));
 		generateDashboard(email);
 		document.getElementById("account-settings-div").style.display = "none";
 	} else {
@@ -101,21 +131,23 @@ const logAccountSettingsData = async (event) => {
 const addListName = async (event) => {
 	event.preventDefault();
 	const createNewListDiv = await document.getElementById("create-new-list-div");
+	const listName = await document.createElement("h3");
+	await listName.setAttribute("class","listName");
+	await listName.setAttribute("id","list-name");
+	listName.innerText = await document.getElementById("listName-createNewList").value;
+	await createNewListDiv.appendChild(listName);
 	const newUL = await document.createElement("ul");
 	await newUL.setAttribute("class","List");
-	await newUL.setAttribute("id","new-list") 
-	newUL.innerText = await document.getElementById("listName-createNewList").value;
+	await newUL.setAttribute("id","new-list");
 	await createNewListDiv.appendChild(newUL);
-	// await console.log(document.getElementById("listName-createNewList").value);
-	// await console.log("Added ListName");
 };
 const addPoint = async (event) => {
 	event.preventDefault();
-	const newList = await document.getElementById("new-list");
+	const newUL = await document.getElementById("new-list");
 	const newLI = await document.createElement("li");
 	await newLI.setAttribute("class","Point");
 	newLI.innerText = await document.getElementById("point-createNewList").value;
-	await newList.appendChild(newLI);
+	await newUL.appendChild(newLI);
 	console.log("Added Point");
 };
 const logNewListData = async (event) => {
@@ -123,12 +155,26 @@ const logNewListData = async (event) => {
 	const target = await event.target;
 	const createNewListDiv = await document.getElementById("create-new-list-div");
 	if (target.id === "save-createNewList") {
+		const listNameHeader = document.getElementById("list-name");
+		const listName = listNameHeader.innerText;
 		const listToSave = document.getElementById("new-list");
-		const listName = document.getElementById("new-list").innerText;
-		console.log(listToSave);
+		const listElements = listToSave.getElementsByClassName("Point");
+		const listArray = [];
+		for (i = 0; i < listElements.length; i++) {
+			listArray.push(listElements[i].innerText);
+		}
 		console.log(listName);
+		console.log(listArray);
 		console.log("Saved List");
+		createNewListDiv.removeChild(listNameHeader);
 		createNewListDiv.removeChild(listToSave);
+		const testObj = {listName: listArray};
+		console.log(testObj);
+		const userData = await JSON.parse(localStorage.getItem(userEmail));
+		userData.lists[listName] = await listArray;
+		await localStorage.setItem(userEmail,JSON.stringify(userData));
+		document.getElementById("create-new-list-div").style.display = "none";
+		generateDashboard(userEmail);
 	}
 };
 const cancelSignUpLogInAccountSettingsList = (event) => {
@@ -141,13 +187,12 @@ const cancelSignUpLogInAccountSettingsList = (event) => {
 		generateStartButtons();
 	} else if (target.id === "cancel-accountSettings"){
 		document.getElementById("account-settings-div").style.display = "none";
-		document.getElementById("dashboard-div").style.display = "inline";
+		generateDashboard(userEmail);
 	} else if (target.id === "cancel-createNewList"){
 		document.getElementById("create-new-list-div").style.display = "none";
-		document.getElementById("dashboard-div").style.display = "inline";
+		generateDashboard(userEmail);
 	} 
 };
-
 const dashboardDivEvent = (event) => {
 	event.preventDefault();
 	const target = event.target;
@@ -162,7 +207,6 @@ const dashboardDivEvent = (event) => {
 		generateCreateNewListForm();
 	}
 };
-
 const triggerEvent = (event) => {
 	const target = event.target;
 	if (target.id === "sign-up"){
