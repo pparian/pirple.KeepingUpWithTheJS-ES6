@@ -1,5 +1,6 @@
 
 let userEmail;
+let listToEdit;
 
 const generateStartButtons = () => {
 	document.getElementById("start-buttons-div").style.display = "inline";
@@ -16,25 +17,86 @@ const generateAccountSettingsForm = () => {
 const generateCreateNewListForm = () => {
 	document.getElementById("create-new-list-div").style.display = "inline";
 };
+const generateEditList = async (list) => {
+	document.getElementById("edit-list-div").style.display = "inline";
+	const editListDiv = document.getElementById("edit-list-div");
+	console.log("Editting list name: " + list);
+	const userData = await JSON.parse(localStorage.getItem(userEmail));
+	let listName = await document.createElement("h3");
+	await listName.setAttribute("class","editListName");
+	await listName.setAttribute("id","edit-list-name");
+	let listElement = document.createElement("ul");
+	await listElement.setAttribute("class","editList");
+	await listElement.setAttribute("id","edit-list");
+	listName.innerText = await list;
+	for (let item in userData.lists[list]) {
+		console.log(userData.lists[list][item]);
+		let listItem = document.createElement("li");
+		await listItem.setAttribute("class","editListItem");
+		await listItem.setAttribute("id",item);
+		listItem.innerText = userData.lists[list][item];
+		listElement.appendChild(listItem);
+	};
+	await editListDiv.appendChild(listName);
+	await editListDiv.appendChild(listElement);
+};
+const generateEditListForm = async (event) => {
+	event.preventDefault();
+	const target = await event.target;
+	let targetId;
+	if (target.id === "edit-list-name" || target.className === "editListItem"){
+		console.log("Clicked on Name.")
+		console.log(target.id);
+		targetId = target.id;
+	}
+	const toBeEdited = document.getElementById(targetId);
+	const editForm = document.createElement("form");
+	const editInput = document.createElement("input");
+	editInput.setAttribute("type","text");
+	editInput.setAttribute("id","edit-input");
+	editInput.setAttribute("required","true");
+	const saveEdit = document.createElement("button");
+	saveEdit.setAttribute("type","submit");
+	saveEdit.innerText = "Save";
+	const removeEdit = document.createElement("button");
+	removeEdit.setAttribute("type","button");
+	removeEdit.innerText = "Remove";
+	const cancelEdit = document.createElement("button");
+	cancelEdit.setAttribute("type","button");
+	cancelEdit.innerText = "Cancel";
+	editForm.appendChild(editInput);
+	editForm.appendChild(saveEdit);
+	toBeEdited.appendChild(editForm);
+	toBeEdited.appendChild(removeEdit);
+	toBeEdited.appendChild(cancelEdit);
+};
 const generateLists = (listObj) => {
-	const listDiv = document.getElementById("dashboard-list-div");
+	const dashboardListDiv = document.getElementById("dashboard-list-div");
 	const userLists = listObj;
 	async function buildList(list){
+		let listDiv = document.createElement("div");
+		listDiv.setAttribute("class","toDoList");
+		listDiv.setAttribute("id",list);
+		let listHeader = document.createElement("h3")
 		let listElement = document.createElement("ul");
-		listElement.setAttribute("class","to-do-list");
-		listElement.setAttribute("id",list);
-		listElement.innerText = list;
+		let editListButton = document.createElement("button");
+		editListButton.setAttribute("class","editListButton");
+		editListButton.innerText = "Edit List";
+		listHeader.innerText = list;
+		listDiv.appendChild(listHeader);
 		listDiv.appendChild(listElement);
+		listDiv.appendChild(editListButton);
 		for (let item in userLists[list]) {
 			console.log(userLists[list][item]);
 			let listItem = document.createElement("li");
 			listItem.innerText = userLists[list][item];
 			listElement.appendChild(listItem);
 		};
+		dashboardListDiv.appendChild(listDiv);
 	};
 	if(JSON.stringify(userLists) != "{}"){
 		console.log("Lists have data!");
-		listDiv.innerText = "";
+		dashboardListDiv.innerText = "";
 		for (let list in userLists){
 			console.log("The Title of this list is " + list);
 			buildList(list);
@@ -42,7 +104,7 @@ const generateLists = (listObj) => {
 	} else {
 		console.log("There are not lists");
 		setTimeout(() => {
-			listDiv.innerText = "There are no lists";
+			dashboardListDiv.innerText = "There are no lists";
 		}, 20);
 	}
 }
@@ -54,7 +116,6 @@ const generateDashboard = async (email) => {
 		+ userData.firstName +"!";
 	generateLists(userData.lists);
 };
-
 const logSignUpData = async (event) => {
 	event.preventDefault();
 	const target = event.target;
@@ -130,25 +191,36 @@ const logAccountSettingsData = async (event) => {
 };
 const addListName = async (event) => {
 	event.preventDefault();
-	const createNewListDiv = await document.getElementById("create-new-list-div");
-	const listName = await document.createElement("h3");
-	await listName.setAttribute("class","listName");
-	await listName.setAttribute("id","list-name");
-	listName.innerText = await document.getElementById("listName-createNewList").value;
-	await createNewListDiv.appendChild(listName);
-	const newUL = await document.createElement("ul");
-	await newUL.setAttribute("class","List");
-	await newUL.setAttribute("id","new-list");
-	await createNewListDiv.appendChild(newUL);
+	const checkListName = await document.getElementById("listName-createNewList").value;
+	const currentListNames = await JSON.parse(localStorage.getItem(userEmail)).lists;
+	if (checkListName in currentListNames) {
+		alert("List name exists. Pick another list name.")
+	} else {
+		const createNewListDiv = await document.getElementById("create-new-list-div");
+		const listName = await document.createElement("h3");
+		await listName.setAttribute("class","listName");
+		await listName.setAttribute("id","list-name");
+		listName.innerText = await document.getElementById("listName-createNewList").value;
+		await createNewListDiv.appendChild(listName);
+		const newUL = await document.createElement("ul");
+		await newUL.setAttribute("class","List");
+		await newUL.setAttribute("id","new-list");
+		await createNewListDiv.appendChild(newUL);
+	}
 };
 const addPoint = async (event) => {
 	event.preventDefault();
-	const newUL = await document.getElementById("new-list");
-	const newLI = await document.createElement("li");
-	await newLI.setAttribute("class","Point");
-	newLI.innerText = await document.getElementById("point-createNewList").value;
-	await newUL.appendChild(newLI);
-	console.log("Added Point");
+	try {
+		const newUL = await document.getElementById("new-list");
+		const newLI = await document.createElement("li");
+		await newLI.setAttribute("class","Point");
+		newLI.innerText = await document.getElementById("point-createNewList").value;
+		await newUL.appendChild(newLI);
+		console.log("Added Point");
+	} catch (error) {
+		console.log(error);
+		alert("Add list name first.");
+	}
 };
 const logNewListData = async (event) => {
 	await event.preventDefault();
@@ -177,6 +249,36 @@ const logNewListData = async (event) => {
 		generateDashboard(userEmail);
 	}
 };
+const editListData = async (event) => {
+	await event.preventDefault();
+	const target = await event.target;
+	if (target.className === "editListButton") {
+		document.getElementById("dashboard-div").style.display = "none";
+		listToEdit = target.parentElement.id;
+		generateEditList(listToEdit);
+	}	
+};
+const logEditListData = async (event) => {
+	await event.preventDefault();
+	const target = await event.target;
+	if (target.id === "save-editList"){
+		console.log("Saved edited list!");
+		// editListDiv.removeChild(listNameHeader);
+		// editListDiv.removeChild(listToSave);
+	}
+};
+const deleteListData = async (event) => {
+	await event.preventDefault();
+	const target = await event.target;
+	if (target.id === "delete-editList"){
+		console.log("Deleted list!");
+		const userData = await JSON.parse(localStorage.getItem(userEmail));
+		await delete userData.lists[listToEdit];
+		await localStorage.setItem(userEmail,JSON.stringify(userData));
+		document.getElementById("edit-list-div").style.display = "none";
+		generateDashboard(userEmail);
+	}
+};
 const cancelSignUpLogInAccountSettingsList = (event) => {
 	const target = event.target;
 	if (target.id === "cancel-signUp"){
@@ -190,6 +292,9 @@ const cancelSignUpLogInAccountSettingsList = (event) => {
 		generateDashboard(userEmail);
 	} else if (target.id === "cancel-createNewList"){
 		document.getElementById("create-new-list-div").style.display = "none";
+		generateDashboard(userEmail);
+	} else if (target.id === "cancel-editList"){
+		document.getElementById("edit-list-div").style.display = "none";
 		generateDashboard(userEmail);
 	} 
 };
@@ -235,6 +340,7 @@ document.getElementById("log-in-form").addEventListener("mouseup",cancelSignUpLo
 
 // Dashboard Buttons
 document.getElementById("dashboard-div").addEventListener("mouseup",dashboardDivEvent);
+document.getElementById("dashboard-list-div").addEventListener("mouseup",editListData);
 
 // Account Settings Form
 document.getElementById("account-settings-form").addEventListener("submit",logAccountSettingsData);
@@ -245,3 +351,9 @@ document.getElementById("add-listname-form").addEventListener("submit",addListNa
 document.getElementById("add-point-form").addEventListener("submit",addPoint);
 document.getElementById("create-new-list-div").addEventListener("mouseup",logNewListData);
 document.getElementById("create-new-list-div").addEventListener("mouseup",cancelSignUpLogInAccountSettingsList);
+
+// Edit List Form
+document.getElementById("edit-list-div").addEventListener("mouseup",logEditListData);
+document.getElementById("edit-list-div").addEventListener("mouseup",deleteListData);
+document.getElementById("edit-list-div").addEventListener("mouseup",generateEditListForm);
+document.getElementById("edit-list-div").addEventListener("mouseup",cancelSignUpLogInAccountSettingsList);
