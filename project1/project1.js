@@ -1,6 +1,9 @@
 
-let userEmail;
-let listToEdit;
+let userEmail = null;
+let listToEdit = null;
+let editFormActive = false;
+console.log(userEmail);
+console.log(listToEdit);
 
 const generateStartButtons = () => {
 	document.getElementById("start-buttons-div").style.display = "inline";
@@ -16,6 +19,33 @@ const generateAccountSettingsForm = () => {
 };
 const generateCreateNewListForm = () => {
 	document.getElementById("create-new-list-div").style.display = "inline";
+};
+const saveEditField = (event) => {
+	event.preventDefault();
+	const target = event.target;
+	const inputEdit = document.getElementById("edit-input").value;
+	console.log(inputEdit);
+	console.log("Saved Edit!");
+	const editListItem = target.parentElement;
+	const editListForm = document.getElementById("edit-form");
+	const deleteEditListFormButton = document.getElementById("delete-editInput");
+	const cancelEditListFormButton = document.getElementById("cancel-editInput");
+	editListItem.innerText = inputEdit;
+	editFormActive = false;
+	// editListItem.removeChild(editListForm);
+	// editListItem.removeChild(deleteEditListFormButton);
+	// editListItem.removeChild(cancelEditListFormButton);
+};
+const deleteEditField = (event) => {
+	event.preventDefault();
+	const target = event.target;
+	if (target.id === "delete-editInput") {
+		const editListItem = target.parentElement;
+		const editList = editListItem.parentElement;
+		editList.removeChild(editListItem);
+		console.log("Deleted Field!");
+		editFormActive = false;
+	}
 };
 const generateEditList = async (list) => {
 	document.getElementById("edit-list-div").style.display = "inline";
@@ -33,7 +63,7 @@ const generateEditList = async (list) => {
 		console.log(userData.lists[list][item]);
 		let listItem = document.createElement("li");
 		await listItem.setAttribute("class","editListItem");
-		await listItem.setAttribute("id",item);
+		await listItem.setAttribute("id",Math.floor(Math.random()*1000 + 1));
 		listItem.innerText = userData.lists[list][item];
 		listElement.appendChild(listItem);
 	};
@@ -44,31 +74,72 @@ const generateEditListForm = async (event) => {
 	event.preventDefault();
 	const target = await event.target;
 	let targetId;
-	if (target.id === "edit-list-name" || target.className === "editListItem"){
-		console.log("Clicked on Name.")
-		console.log(target.id);
-		targetId = target.id;
+	if (target.className === "editListItem" && target.className !== "editForm") {
+		if (!editFormActive){
+			console.log("Clicked on Name.")
+			console.log(target.id);
+			editFormActive = true;
+			targetId = target.id;
+			const toBeEdited = document.getElementById(targetId);
+			const editForm = document.createElement("form");
+			editForm.setAttribute("class","editForm");
+			editForm.setAttribute("id","edit-form");
+			const editInput = document.createElement("input");
+			editInput.setAttribute("type","text");
+			editInput.setAttribute("id","edit-input");
+			editInput.setAttribute("required","true");
+			const saveEdit = document.createElement("button");
+			saveEdit.setAttribute("type","submit");
+			saveEdit.setAttribute("id","save-editInput");
+			saveEdit.innerText = "Save";
+			const removeEdit = document.createElement("button");
+			removeEdit.setAttribute("type","button");
+			removeEdit.setAttribute("id","delete-editInput");
+			removeEdit.innerText = "Delete";
+			const cancelEdit = document.createElement("button");
+			cancelEdit.setAttribute("type","button");
+			cancelEdit.setAttribute("id","cancel-editInput");
+			cancelEdit.innerText = "Cancel";
+			await editForm.appendChild(editInput);
+			await editForm.appendChild(saveEdit);
+			await toBeEdited.appendChild(editForm);
+			await toBeEdited.appendChild(removeEdit);
+			await toBeEdited.appendChild(cancelEdit);
+			await editForm.addEventListener("submit",saveEditField);
+		} else {
+			alert("Complete current edit form!");
+		}
+	} else if (target.id === "edit-list-name" && target.className !== "editForm") {
+		if (!editFormActive){
+			console.log("Clicked on Name.")
+			console.log(target.id);
+			editFormActive = true;
+			targetId = target.id;
+			const toBeEdited = document.getElementById(targetId);
+			const editForm = document.createElement("form");
+			editForm.setAttribute("class","editForm");
+			editForm.setAttribute("id","edit-form");
+			const editInput = document.createElement("input");
+			editInput.setAttribute("type","text");
+			editInput.setAttribute("id","edit-input");
+			editInput.setAttribute("required","true");
+			const saveEdit = document.createElement("button");
+			saveEdit.setAttribute("type","submit");
+			saveEdit.setAttribute("id","save-editInput");
+			saveEdit.innerText = "Save";
+			const cancelEdit = document.createElement("button");
+			cancelEdit.setAttribute("type","button");
+			cancelEdit.setAttribute("id","cancel-editInput");
+			cancelEdit.innerText = "Cancel";
+			await editForm.appendChild(editInput);
+			await editForm.appendChild(saveEdit);
+			await toBeEdited.appendChild(editForm);
+			await toBeEdited.appendChild(cancelEdit);
+			await editForm.addEventListener("submit",saveEditField);
+		} else {
+			alert("Complete current edit form!");
+		}
 	}
-	const toBeEdited = document.getElementById(targetId);
-	const editForm = document.createElement("form");
-	const editInput = document.createElement("input");
-	editInput.setAttribute("type","text");
-	editInput.setAttribute("id","edit-input");
-	editInput.setAttribute("required","true");
-	const saveEdit = document.createElement("button");
-	saveEdit.setAttribute("type","submit");
-	saveEdit.innerText = "Save";
-	const removeEdit = document.createElement("button");
-	removeEdit.setAttribute("type","button");
-	removeEdit.innerText = "Remove";
-	const cancelEdit = document.createElement("button");
-	cancelEdit.setAttribute("type","button");
-	cancelEdit.innerText = "Cancel";
-	editForm.appendChild(editInput);
-	editForm.appendChild(saveEdit);
-	toBeEdited.appendChild(editForm);
-	toBeEdited.appendChild(removeEdit);
-	toBeEdited.appendChild(cancelEdit);
 };
 const generateLists = (listObj) => {
 	const dashboardListDiv = document.getElementById("dashboard-list-div");
@@ -227,26 +298,31 @@ const logNewListData = async (event) => {
 	const target = await event.target;
 	const createNewListDiv = await document.getElementById("create-new-list-div");
 	if (target.id === "save-createNewList") {
-		const listNameHeader = document.getElementById("list-name");
-		const listName = listNameHeader.innerText;
-		const listToSave = document.getElementById("new-list");
-		const listElements = listToSave.getElementsByClassName("Point");
-		const listArray = [];
-		for (i = 0; i < listElements.length; i++) {
-			listArray.push(listElements[i].innerText);
+		const listNameHeader = await document.getElementById("list-name");
+		const listName = await listNameHeader.innerText;
+		const listToSave = await document.getElementById("new-list");
+		const listElements = await listToSave.getElementsByClassName("Point");
+		if (listElements.length === 0) {
+			alert("Add items before saving to-do list!");
+		} else {
+			const listArray = await [];
+			for (i = 0; i < listElements.length; i++) {
+				await listArray.push(listElements[i].innerText);
+			}
+			await console.log(listName);
+			await console.log(listArray);
+			await console.log("Saved List");
+			await createNewListDiv.removeChild(listNameHeader);
+			await createNewListDiv.removeChild(listToSave);
+			const testObj = await {listName: listArray};
+			await console.log(testObj);
+			const userData = await JSON.parse(localStorage.getItem(userEmail));
+			userData.lists[listName] = await listArray;
+			console.log(userData.lists);
+			await localStorage.setItem(userEmail,JSON.stringify(userData));
+			document.getElementById("create-new-list-div").style.display = await "none";
+			await generateDashboard(userEmail);
 		}
-		console.log(listName);
-		console.log(listArray);
-		console.log("Saved List");
-		createNewListDiv.removeChild(listNameHeader);
-		createNewListDiv.removeChild(listToSave);
-		const testObj = {listName: listArray};
-		console.log(testObj);
-		const userData = await JSON.parse(localStorage.getItem(userEmail));
-		userData.lists[listName] = await listArray;
-		await localStorage.setItem(userEmail,JSON.stringify(userData));
-		document.getElementById("create-new-list-div").style.display = "none";
-		generateDashboard(userEmail);
 	}
 };
 const editListData = async (event) => {
@@ -258,13 +334,48 @@ const editListData = async (event) => {
 		generateEditList(listToEdit);
 	}	
 };
+const addPointEditList = async (event) => {
+	event.preventDefault();
+	const editUL = await document.getElementById("edit-list");
+	const listElements = editUL.getElementsByClassName("editListItem");
+	const editLI = await document.createElement("li");
+	await editLI.setAttribute("class","editListItem");
+	await editLI.setAttribute("id","newItem" + Math.floor(Math.random()*1000 + 1));
+	editLI.innerText = await document.getElementById("point-editList").value;
+	await editUL.appendChild(editLI);
+	console.log("Added Point");
+};
 const logEditListData = async (event) => {
 	await event.preventDefault();
 	const target = await event.target;
 	if (target.id === "save-editList"){
-		console.log("Saved edited list!");
-		// editListDiv.removeChild(listNameHeader);
-		// editListDiv.removeChild(listToSave);
+		const checkListName = await document.getElementById("edit-list-name").value;
+		const currentListNames = await JSON.parse(localStorage.getItem(userEmail)).lists;
+		if (checkListName !== listToEdit && checkListName in currentListNames) {
+			alert("New list name exists. Pick another list name.")
+		} else {
+			const editListDiv = document.getElementById("edit-list-div");
+			console.log("Saved edited list!");
+			const listNameHeader = document.getElementById("edit-list-name");
+			const listName = listNameHeader.innerText;
+			const listToSave = document.getElementById("edit-list");
+			const listElements = listToSave.getElementsByClassName("editListItem");
+			const listArray = [];
+			for (i = 0; i < listElements.length; i++) {
+				listArray.push(listElements[i].innerText);
+			}
+			editListDiv.removeChild(listNameHeader);
+			editListDiv.removeChild(listToSave);
+			const testObj = {listName: listArray};
+			console.log(testObj);
+			const userData = await JSON.parse(localStorage.getItem(userEmail));
+			await delete userData.lists[listToEdit];
+			userData.lists[listName] = await listArray;
+			await localStorage.setItem(userEmail,JSON.stringify(userData));
+			document.getElementById("edit-list-div").style.display = "none";
+			generateDashboard(userEmail);
+			listToEdit = null;
+		}
 	}
 };
 const deleteListData = async (event) => {
@@ -277,6 +388,7 @@ const deleteListData = async (event) => {
 		await localStorage.setItem(userEmail,JSON.stringify(userData));
 		document.getElementById("edit-list-div").style.display = "none";
 		generateDashboard(userEmail);
+		listToEdit = null;
 	}
 };
 const cancelSignUpLogInAccountSettingsList = (event) => {
@@ -295,7 +407,25 @@ const cancelSignUpLogInAccountSettingsList = (event) => {
 		generateDashboard(userEmail);
 	} else if (target.id === "cancel-editList"){
 		document.getElementById("edit-list-div").style.display = "none";
+		const editListDiv = document.getElementById("edit-list-div");
+		const listNameHeader = document.getElementById("edit-list-name");
+		const listToSave = document.getElementById("edit-list");
+		editListDiv.removeChild(listNameHeader);
+		editListDiv.removeChild(listToSave);
 		generateDashboard(userEmail);
+		listToEdit = null;
+	} else if (target.id === "cancel-editInput"){
+		const editListItem = target.parentElement;
+		const editListForm = document.getElementById("edit-form");
+		const cancelEditListFormButton = document.getElementById("cancel-editInput");
+		if (editListItem.className === "editListItem") {
+			const deleteEditListFormButton = document.getElementById("delete-editInput");
+			editListItem.removeChild(deleteEditListFormButton);	
+		}
+		editListItem.removeChild(editListForm);
+		editListItem.removeChild(cancelEditListFormButton);
+		editFormActive = false;
+		console.log("Cancelled Edit!");
 	} 
 };
 const dashboardDivEvent = (event) => {
@@ -357,3 +487,5 @@ document.getElementById("edit-list-div").addEventListener("mouseup",logEditListD
 document.getElementById("edit-list-div").addEventListener("mouseup",deleteListData);
 document.getElementById("edit-list-div").addEventListener("mouseup",generateEditListForm);
 document.getElementById("edit-list-div").addEventListener("mouseup",cancelSignUpLogInAccountSettingsList);
+document.getElementById("edit-list-div").addEventListener("mouseup",deleteEditField);
+document.getElementById("add-point-edit-list-form").addEventListener("submit",addPointEditList);
