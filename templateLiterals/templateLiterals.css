@@ -1,0 +1,24 @@
+/* .mainBody{
+}
+*/
+.startButtonsDiv{
+    display: inline;
+} 
+.signUpDiv{
+    display: none;
+}
+.logInDiv{
+    display: none;
+}
+.dashboardDiv{
+    display: none;
+}
+.accountSettingsDiv{
+    display: none;
+}
+.createNewListDiv{
+    display: none;
+}
+.editListDiv{
+    display: none;
+}
